@@ -3,8 +3,16 @@
 ![](static/table.jpg)
 
 Turn [tabular data](https://en.wikipedia.org/wiki/Tab-separated_values) into a
-lookup table in [sqlite3](https://sqlite.org/). Focus on simplicity and
-performance.
+lookup table in [sqlite3](https://sqlite.org/). This is a working prototype.
+
+Some limitations:
+
+* no customizations, the table definition is fixed
+* just string to string mapping
+
+As a performance data point, an example dataset with 1B+ rows can be inserted
+and index in less than 2 hours on an
+[nvme](https://en.wikipedia.org/wiki/NVM_Express) drive.
 
 ## Motivation
 
