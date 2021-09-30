@@ -13,6 +13,8 @@ As a performance data point, an example dataset with 1B+ rows can be inserted
 and index in less than 2 hours on an
 [nvme](https://en.wikipedia.org/wiki/NVM_Express) drive (database file size about 400G).
 
+![](static/439227.gif)
+
 ## Motivation
 
 > SQLite is likely used more than all other database engines combined. Billions
