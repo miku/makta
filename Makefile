@@ -18,6 +18,8 @@ all: $(TARGETS)
 .PHONY: clean
 clean:
 	rm -f $(TARGETS)
+	rm -f $(PKGNAME)_*.deb
+	rm -fr packaging/deb/$(PKGNAME)/usr
 
 .PHONY: purge
 purge:
