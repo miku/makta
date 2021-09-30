@@ -16,3 +16,5 @@
 /slikv
 /fixtures
 /data.db
+*amd64.deb
+/packaging/deb/slikv/usr

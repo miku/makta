@@ -1,5 +1,6 @@
 SHELL := /bin/bash
 TARGETS := slikv
+PKGNAME := slikv
 VERSION := $(shell git rev-parse --short HEAD)
 BUILDTIME := $(shell date -u '+%Y-%m-%dT%H:%M:%SZ')
 
@@ -21,3 +22,11 @@ clean:
 .PHONY: purge
 purge:
 	rm -if data.db
+
+.PHONY: deb
+deb: all
+	mkdir -p packaging/deb/$(PKGNAME)/usr/local/bin
+	cp $(TARGETS) packaging/deb/$(PKGNAME)/usr/local/bin
+	cd packaging/deb && fakeroot dpkg-deb --build $(PKGNAME) .
+	mv packaging/deb/$(PKGNAME)_*.deb .
+
