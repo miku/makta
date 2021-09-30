@@ -1,5 +1,7 @@
 # SLIKV
 
+![](static/table.jpg)
+
 Turn [tabular data](https://en.wikipedia.org/wiki/Tab-separated_values) into a
 lookup table in [sqlite3](https://sqlite.org/). Focus on simplicity and
 performance.
