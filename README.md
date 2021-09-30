@@ -34,7 +34,7 @@ data, you can expect 1K-50K queries per second.
 
 ## Usage
 
-```
+```shsh
 $ slikv -h
 Usage of slikv:
   -B int
@@ -51,11 +51,13 @@ Usage of slikv:
 
 ## Performance
 
-```
+```sh
 $ wc -l fixtures/sample-10m.tsv
 10000000 fixtures/sample-10m.tsv
+
 $ stat --format "%s" fixtures/sample-10m.tsv
 548384897
+
 $ time slikv < fixtures/sample-10m.tsv
 2021/09/30 16:58:07 [ok] initialized database -- data.db
 2021/09/30 16:58:17 [io] written 523M · 56.6M/s
@@ -67,4 +69,4 @@ user    0m24.122s
 sys     0m3.224s
 ```
 
-* 10M rows stored, with indexed keys and values in 27s, 370370 rows/s.
+* 10M rows stored, with indexed keys and values in 27s, 370370 rows/s
