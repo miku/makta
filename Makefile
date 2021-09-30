@@ -8,9 +8,11 @@ GOLDFLAGS += -X main.Buildtime=$(BUILDTIME)
 GOLDFLAGS += -w -s
 GOFLAGS = -ldflags "$(GOLDFLAGS)"
 
-.PHONY: build
-build:
-	go build -ldflags "$(GOLDFLAGS)" .
+.PHONY: all
+all: $(TARGETS)
+
+%: cmd/%/main.go
+	go build -ldflags "$(GOLDFLAGS)" -o $@ $^
 
 .PHONY: clean
 clean:
