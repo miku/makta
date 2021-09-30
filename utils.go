@@ -17,7 +17,7 @@ func RunScript(path, script, message string) error {
 	cmd.Stdin = strings.NewReader(script)
 	err := cmd.Run()
 	if err == nil {
-		log.Printf("[ok] %s -- %s", message, path)
+		log.Printf("[ok] %s · %s", message, path)
 	}
 	return err
 }
