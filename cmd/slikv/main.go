@@ -24,7 +24,7 @@ var (
 	outputFile  = flag.String("o", "data.db", "output filename")
 	bufferSize  = flag.Int("B", 64*1<<20, "buffer size")
 	indexMode   = flag.Int("I", 3, "index mode: 0=none, 1=k, 2=v, 3=kv")
-	cacheSize   = flag.Int("C", 100000, "sqlite3 cache size, needs memory = C x page size")
+	cacheSize   = flag.Int("C", 1000000, "sqlite3 cache size, needs memory = C x page size")
 )
 
 func main() {
