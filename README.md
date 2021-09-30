@@ -1,4 +1,4 @@
-# sqlikv
+# SLIKV
 
 Turn [tabular data](https://en.wikipedia.org/wiki/Tab-separated_values) into a
 lookup table in [sqlite3](https://sqlite.org/). Focus on simplicity and
@@ -14,6 +14,6 @@ dictionary is a perfect data structure as long as the data fits in memory. For
 larger sets (millions of items, tens or hundreds of GB), a dictionary will not
 work.
 
-The *sliqkv* tool takes a two-column tabular file and turns it into an sqlite3
+The *slikv* tool takes a two-column tabular file and turns it into an sqlite3
 database, which you can query in your program. Depending on the size of the
 data, you can expect 1K-50K queries per second.
