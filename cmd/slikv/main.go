@@ -1,4 +1,4 @@
-// sqlikv takes two columns and turns it into an indexed sqlite3 database.
+// slikv takes two columns and turns it into an indexed sqlite3 database.
 package main
 
 import (

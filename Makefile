@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-TARGETS := sqlikv
+TARGETS := slikv
 VERSION := $(shell git rev-parse --short HEAD)
 BUILDTIME := $(shell date -u '+%Y-%m-%dT%H:%M:%SZ')
 
