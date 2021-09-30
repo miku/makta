@@ -1,59 +1,4 @@
-// mkocidb takes two columns and turns it into an indexed sqlite3 database.
-// Example: Help to query an OCI data dump offline.
-//
-// $ time mkocidb < sample-m.tsv
-// 2021/09/20 13:13:55 [ok] initialized database at data.db
-// written 5G -- 6.6M/s
-//
-// real    12m46.585s
-// user    11m17.193s
-// sys     3m2.369s
-//
-// sqlite> select count(*) from map;
-// 99057347
-//
-// sqlite> select v from map where k = '10.1182/blood.v91.5.1533.1533_1533_1541';
-// 10.1126/science.142.3595.1069
-// 10.1016/0006-291x(68)90266-0
-// 10.1001/jama.1966.03100120106029
-// 10.1002/1097-0142(19821101)50:9<1683::aid-cncr2820500904>3.0.co;2-x
-// 10.1002/1097-0142(19860215)57:4<718::aid-cncr2820570406>3.0.co;2-p
-// 10.1056/nejm199004123221504
-// ...
-//
-// Note that the machine this runs on probably needs at least 4K * cache_size
-// free memory; not sure how much performance varies for these ops, if we
-// reduce.
-//
-// Indexing dstat on nvme.
-//
-// --total-cpu-usage-- -dsk/total- -net/total- ---paging-- ---system--
-// usr sys idl wai stl| read  writ| recv  send|  in   out | int   csw
-//  14   2  84   0   0|  23M   63M|   0     0 |  92k  241k|7859    44k
-//  14   3  81   2   0| 561M  888k| 252k 5546B|   0     0 |5711    10k
-//  17   1  83   0   0|8192B    0 |2200B   94B|   0     0 |2831  8652
-//  17   6  75   1   0| 115M  793M|   0   359B|  28k    0 |4611    14k
-//  16   4  77   2   0| 807M    0 | 313k 7332B|  28k    0 |8005    15k
-//  18   3  79   1   0| 337M    0 |   0     0 |   0     0 |5327    12k
-//  18   2  79   0   0|  16k 1000k|  42B  359B|   0     0 |3920    10k
-//  15   6  76   3   0| 490M  793M| 257k 5640B|   0    48k|7172    15k
-//  17   6  75   2   0| 768M  152k|2242B  188B|4096B   76k|8282    17k
-//  20   1  79   0   0|  24k  528k|   0   359B|  12k    0 |3379    11k
-//  16   3  81   0   0|8192B    0 | 264k 6392B|4096B    0 |2995  9128
-//  12   5  81   3   0| 768M  800k|2313B  188B|   0     0 |6880    10k
-//  15   2  81   1   0| 481M    0 |  42B  359B|   0     0 |5621  9342
-//  18   1  81   0   0|8192B    0 | 321k 6674B|   0     0 |2988  9067
-//  14   6  79   2   0| 259M  793M|   0     0 |   0     0 |5069  9360
-//  11   4  82   3   0| 882M 8192B|   0   359B|   0  4096B|7338    10k
-//  17   1  81   0   0| 113M  816k| 270k 5686B|   0     0 |4259  8830
-//  16   4  78   2   0|  56k 1550M|2373B   94B|   0     0 |4868  9010
-//  11   4  81   3   0| 867M  253M|  80k 2615B|   0    36k|7978    10k
-// ...
-// More on sqlite3 pragmas:
-//
-// https://www.sqlite.org/pragma.html
-// https://stackoverflow.com/q/1983979/89391
-//
+// sqlikv takes two columns and turns it into an indexed sqlite3 database.
 package main
 
 import (
@@ -134,47 +79,48 @@ func TempFileReader(r io.Reader) (string, error) {
 // forth.  The following units are available: E: Exabyte, P: Petabyte, T:
 // Terabyte, G: Gigabyte, M: Megabyte, K: Kilobyte, B: Byte, The unit that
 // results in the smallest number greater than or equal to 1 is always chosen.
-func ByteSize(bytes int64) string {
+func ByteSize(bytes int) string {
 	const (
 		BYTE = 1 << (10 * iota)
-		KILOBYTE
-		MEGABYTE
-		GIGABYTE
-		TERABYTE
-		PETABYTE
-		EXABYTE
+		KB
+		MB
+		GB
+		TB
+		PB
+		EB
 	)
 	var (
-		unit  = ""
-		value = float64(bytes)
+		u      = ""
+		v      = float64(bytes)
+		result string
 	)
 	switch {
-	case bytes >= EXABYTE:
-		unit = "E"
-		value = value / EXABYTE
-	case bytes >= PETABYTE:
-		unit = "P"
-		value = value / PETABYTE
-	case bytes >= TERABYTE:
-		unit = "T"
-		value = value / TERABYTE
-	case bytes >= GIGABYTE:
-		unit = "G"
-		value = value / GIGABYTE
-	case bytes >= MEGABYTE:
-		unit = "M"
-		value = value / MEGABYTE
-	case bytes >= KILOBYTE:
-		unit = "K"
-		value = value / KILOBYTE
+	case bytes >= EB:
+		u = "E"
+		v = v / EB
+	case bytes >= PB:
+		u = "P"
+		v = v / PB
+	case bytes >= TB:
+		u = "T"
+		v = v / TB
+	case bytes >= GB:
+		u = "G"
+		v = v / GB
+	case bytes >= MB:
+		u = "M"
+		v = v / MB
+	case bytes >= KB:
+		u = "K"
+		v = v / KB
 	case bytes >= BYTE:
-		unit = "B"
+		u = "B"
 	case bytes == 0:
 		return "0B"
 	}
-	result := strconv.FormatFloat(value, 'f', 1, 64)
+	result = strconv.FormatFloat(v, 'f', 1, 64)
 	result = strings.TrimSuffix(result, ".0")
-	return result + unit
+	return result + u
 }
 
 func runScript(path, script, message string) error {
@@ -228,7 +174,7 @@ func Flushf(s string, vs ...interface{}) {
 // 12.3kB/s, etc.
 func HumanSpeed(bytesWritten int64, elapsedSeconds float64) string {
 	speed := float64(bytesWritten) / elapsedSeconds
-	return fmt.Sprintf("%s/s", ByteSize(int64(speed)))
+	return fmt.Sprintf("%s/s", ByteSize(int(speed)))
 }
 
 func main() {
@@ -259,7 +205,7 @@ func main() {
 			}
 			written += n
 			elapsed = time.Since(started).Seconds()
-			Flushf("written %s · %s", ByteSize(written), HumanSpeed(written, elapsed))
+			Flushf("written %s · %s", ByteSize(int(written)), HumanSpeed(written, elapsed))
 			return nil
 		}
 	)

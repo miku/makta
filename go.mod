@@ -1,3 +1,3 @@
-module github.com/miku/labe/tools/mkocidb
+module github.com/miku/sqlikv
 
 go 1.17
