@@ -19,3 +19,23 @@ work.
 The *slikv* tool takes a two-column tabular file and turns it into an sqlite3
 database, which you can query in your program. Depending on the size of the
 data, you can expect 1K-50K queries per second.
+
+## Performance
+
+```
+$ wc -l fixtures/sample-10m.tsv
+10000000 fixtures/sample-10m.tsv
+$ stat --format "%s" fixtures/sample-10m.tsv
+548384897
+$ time slikv < fixtures/sample-10m.tsv
+2021/09/30 16:58:07 [ok] initialized database -- data.db
+2021/09/30 16:58:17 [io] written 523M · 56.6M/s
+2021/09/30 16:58:21 [ok] 1/2 created index -- data.db
+2021/09/30 16:58:34 [ok] 2/2 created index -- data.db
+
+real    0m26.267s
+user    0m24.122s
+sys     0m3.224s
+```
+
+* 10M rows stored, with indexed keys and values in 27s, 370370 rows/s.
