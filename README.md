@@ -15,6 +15,12 @@ and index in less than 2 hours on an
 
 ![](static/439227.gif)
 
+## How it works
+
+Data is chopped up into smaller chunks (default about 64MB) and imported with
+the `.import` [command](https://www.sqlite.org/cli.html). Indexes are created
+only after all data has been inserted.
+
 ## Motivation
 
 > SQLite is likely used more than all other database engines combined. Billions
