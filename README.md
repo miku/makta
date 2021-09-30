@@ -13,6 +13,8 @@ and index in 92 minutes (on a recent CPU and an
 [nvme](https://en.wikipedia.org/wiki/NVM_Express) drive; database file size
 about 400G).
 
+![](static/439256.gif)
+
 ## How it works
 
 Data is chopped up into smaller chunks (default about 64MB) and imported with
