@@ -20,6 +20,23 @@ The *slikv* tool takes a two-column tabular file and turns it into an sqlite3
 database, which you can query in your program. Depending on the size of the
 data, you can expect 1K-50K queries per second.
 
+## Usage
+
+```
+$ slikv -h
+Usage of slikv:
+  -B int
+        buffer size (default 67108864)
+  -C int
+        sqlite3 cache size, needs memory = C x page size (default 100000)
+  -I int
+        index mode: 0=none, 1=k, 2=v, 3=kv (default 3)
+  -o string
+        output filename (default "data.db")
+  -version
+        show version and exit
+```
+
 ## Performance
 
 ```
