@@ -24,39 +24,7 @@ var (
 	outputFile  = flag.String("o", "data.db", "output filename")
 	bufferSize  = flag.Int("B", 64*1<<20, "buffer size")
 	indexMode   = flag.Int("I", 3, "index mode: 0=none, 1=k, 2=v, 3=kv")
-
-	initSQL = `
-CREATE TABLE IF NOT EXISTS map
-(
-	k TEXT,
-	v TEXT
-);
-`
-	keyIndexSQL = `
-PRAGMA journal_mode = OFF;
-PRAGMA synchronous = 0;
-PRAGMA cache_size = 1000000;
-PRAGMA locking_mode = EXCLUSIVE;
-CREATE INDEX IF NOT EXISTS idx_k ON map(k);
-`
-	valueIndexSQL = `
-PRAGMA journal_mode = OFF;
-PRAGMA synchronous = 0;
-PRAGMA cache_size = 1000000;
-PRAGMA locking_mode = EXCLUSIVE;
-
-CREATE INDEX IF NOT EXISTS idx_v ON map(v);
-`
-	importSQL = `
-PRAGMA journal_mode = OFF;
-PRAGMA synchronous = 0;
-PRAGMA cache_size = 1000000;
-PRAGMA locking_mode = EXCLUSIVE;
-PRAGMA temp_store = MEMORY;
-
-.mode tabs
-.import /dev/stdin map
-`
+	cacheSize   = flag.Int("C", 100000, "sqlite3 cache size, needs memory = C x page size")
 )
 
 func main() {
@@ -65,12 +33,34 @@ func main() {
 		runFile string
 	)
 	flag.Parse()
+	var (
+		pragma = fmt.Sprintf(`
+PRAGMA journal_mode = OFF;
+PRAGMA synchronous = 0;
+PRAGMA cache_size = %d;
+PRAGMA locking_mode = EXCLUSIVE;`, *cacheSize)
+		initSQL = `
+CREATE TABLE IF NOT EXISTS map (k TEXT, v TEXT);`
+		keyIndexSQL = fmt.Sprintf(`
+%s
+CREATE INDEX IF NOT EXISTS idx_k ON map(k);`, pragma)
+		valueIndexSQL = fmt.Sprintf(`
+%s
+CREATE INDEX IF NOT EXISTS idx_v ON map(v);`, pragma)
+		importSQL = fmt.Sprintf(`
+%s
+PRAGMA temp_store = MEMORY;
+
+.mode tabs
+.import /dev/stdin map`, pragma)
+	)
+
 	if *showVersion {
 		fmt.Printf("sqlikv %s %s\n", Version, Buildtime)
 		os.Exit(0)
 	}
 	if termutil.Isatty(os.Stdin.Fd()) {
-		log.Println("nothin on stdin, exiting")
+		log.Println("stdin: no data")
 		os.Exit(0)
 	}
 	if _, err := os.Stat(*outputFile); os.IsNotExist(err) {
