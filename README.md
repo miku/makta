@@ -42,7 +42,7 @@ Usage of slikv:
   -B int
         buffer size (default 67108864)
   -C int
-        sqlite3 cache size, needs memory = C x page size (default 100000)
+        sqlite3 cache size, needs memory = C x page size (default 1000000)
   -I int
         index mode: 0=none, 1=k, 2=v, 3=kv (default 3)
   -o string
