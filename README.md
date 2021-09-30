@@ -9,7 +9,7 @@ with limitations, e.g. no customizations, the table definition is fixed.
 > CREATE TABLE IF NOT EXISTS map (k TEXT, v TEXT)
 
 As a performance data point, an example dataset with 1B+ rows can be inserted
-and index in less than 40 minutes (on a recent CPU and an
+and index in 92 minutes (on a recent CPU and an
 [nvme](https://en.wikipedia.org/wiki/NVM_Express) drive; database file size
 about 400G).
 
@@ -26,8 +26,7 @@ only after all data has been inserted.
 
 Sometimes, programs need lookup tables to map values between two domains. A
 dictionary is a perfect data structure as long as the data fits in memory. For
-larger sets (millions of items, tens or hundreds of GB), a dictionary will not
-work.
+larger sets (hundreds of millions of entries), a dictionary will not work.
 
 The *slikv* tool takes a two-column tabular file and turns it into an sqlite3
 database, which you can query in your program. Depending on the size of the
