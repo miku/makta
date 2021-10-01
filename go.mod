@@ -1,4 +1,4 @@
-module github.com/miku/sqlikv
+module github.com/miku/slikv
 
 go 1.17
 

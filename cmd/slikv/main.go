@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/andrew-d/go-termutil"
-	"github.com/miku/sqlikv"
+	slikv "github.com/miku/slikv"
 )
 
 var (
@@ -56,7 +56,7 @@ PRAGMA temp_store = MEMORY;
 	)
 
 	if *showVersion {
-		fmt.Printf("sqlikv %s %s\n", Version, Buildtime)
+		fmt.Printf("slikv %s %s\n", Version, Buildtime)
 		os.Exit(0)
 	}
 	if termutil.Isatty(os.Stdin.Fd()) {
@@ -64,11 +64,11 @@ PRAGMA temp_store = MEMORY;
 		os.Exit(0)
 	}
 	if _, err := os.Stat(*outputFile); os.IsNotExist(err) {
-		if err := sqlikv.RunScript(*outputFile, initSQL, "initialized database"); err != nil {
+		if err := slikv.RunScript(*outputFile, initSQL, "initialized database"); err != nil {
 			log.Fatal(err)
 		}
 	}
-	if runFile, err = sqlikv.TempFileReader(strings.NewReader(importSQL)); err != nil {
+	if runFile, err = slikv.TempFileReader(strings.NewReader(importSQL)); err != nil {
 		log.Fatal(err)
 	}
 	var (
@@ -78,15 +78,15 @@ PRAGMA temp_store = MEMORY;
 		started     = time.Now()
 		elapsed     float64
 		importBatch = func() error {
-			n, err := sqlikv.RunImport(&buf, runFile, *outputFile)
+			n, err := slikv.RunImport(&buf, runFile, *outputFile)
 			if err != nil {
 				return err
 			}
 			written += n
 			elapsed = time.Since(started).Seconds()
-			sqlikv.Flushf("written %s · %s",
-				sqlikv.ByteSize(int(written)),
-				sqlikv.HumanSpeed(written, elapsed))
+			slikv.Flushf("written %s · %s",
+				slikv.ByteSize(int(written)),
+				slikv.HumanSpeed(written, elapsed))
 			return nil
 		}
 	)
@@ -125,7 +125,7 @@ PRAGMA temp_store = MEMORY;
 	}
 	for i, script := range indexScripts {
 		msg := fmt.Sprintf("%d/%d created index", i+1, len(indexScripts))
-		if err := sqlikv.RunScript(*outputFile, script, msg); err != nil {
+		if err := slikv.RunScript(*outputFile, script, msg); err != nil {
 			log.Fatal(err)
 		}
 	}

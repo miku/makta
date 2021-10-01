@@ -1,4 +1,4 @@
-package sqlikv
+package slikv
 
 import (
 	"fmt"
