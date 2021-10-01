@@ -3,8 +3,8 @@
 ![](static/table.jpg)
 
 Turn [tabular data](https://en.wikipedia.org/wiki/Tab-separated_values) into a
-lookup table using [sqlite3](https://sqlite.org/). This is a working prototype
-with limitations, e.g. no customizations, the table definition is fixed.
+lookup table using [sqlite3](https://sqlite.org/). This is a working PROTOTYPE
+with limitations, e.g. no customizations, the table definition is fixed, etc.
 
 > CREATE TABLE IF NOT EXISTS map (k TEXT, v TEXT)
 
