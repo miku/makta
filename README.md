@@ -9,17 +9,18 @@ with limitations, e.g. no customizations, the table definition is fixed, etc.
 > CREATE TABLE IF NOT EXISTS map (k TEXT, v TEXT)
 
 As a performance data point, an example dataset with 1B+ rows can be inserted
-and index in 92 minutes (on a recent CPU and an
-[nvme](https://en.wikipedia.org/wiki/NVM_Express) drive; database file size
-about 400G).
+and indexed in less than two hours (on a [recent
+CPU](https://ark.intel.com/content/www/us/en/ark/products/122589/intel-core-i7-8550u-processor-8m-cache-up-to-4-00-ghz.html)
+and an [nvme](https://en.wikipedia.org/wiki/NVM_Express) drive; database file
+size: 400G).
 
 ![](static/439256.gif)
 
 ## How it works
 
-Data is chopped up into smaller chunks (default about 64MB) and imported with
+Data is chopped up into smaller chunks (defaults to about 64MB) and imported with
 the `.import` [command](https://www.sqlite.org/cli.html). Indexes are created
-only after all data has been inserted.
+only after all data has been imported.
 
 ## Motivation
 
@@ -27,8 +28,9 @@ only after all data has been inserted.
 > and billions of copies of SQLite exist in the wild. -- [https://www.sqlite.org/mostdeployed.html](https://www.sqlite.org/mostdeployed.html)
 
 Sometimes, programs need lookup tables to map values between two domains. A
-dictionary is a perfect data structure as long as the data fits in memory. For
-larger sets (hundreds of millions of entries), a dictionary will not work.
+[dictionary](https://xlinux.nist.gov/dads/HTML/dictionary.html) is a perfect
+data structure as long as the data fits in memory. For larger sets (hundreds of
+millions of entries), a dictionary will not work.
 
 The *slikv* tool takes a two-column tabular file and turns it into an sqlite3
 database, which you can query in your program. Depending on the size of the
