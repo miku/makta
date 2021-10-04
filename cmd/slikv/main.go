@@ -30,9 +30,11 @@ var (
 func main() {
 	flag.Parse()
 	var (
-		err     error
-		runFile string
-		pragma  = fmt.Sprintf(`
+		err      error
+		initFile string
+	)
+	var (
+		pragma = fmt.Sprintf(`
 PRAGMA journal_mode = OFF;
 PRAGMA synchronous = 0;
 PRAGMA cache_size = %d;
@@ -66,7 +68,7 @@ PRAGMA temp_store = MEMORY;
 			log.Fatal(err)
 		}
 	}
-	if runFile, err = slikv.TempFileReader(strings.NewReader(importSQL)); err != nil {
+	if initFile, err = slikv.TempFileReader(strings.NewReader(importSQL)); err != nil {
 		log.Fatal(err)
 	}
 	var (
@@ -76,7 +78,7 @@ PRAGMA temp_store = MEMORY;
 		started     = time.Now()
 		elapsed     float64
 		importBatch = func() error {
-			n, err := slikv.RunImport(&buf, runFile, *outputFile)
+			n, err := slikv.RunImport(&buf, initFile, *outputFile)
 			if err != nil {
 				return err
 			}

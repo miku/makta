@@ -12,6 +12,7 @@ import (
 	"time"
 )
 
+// RunScript runs a script on an sqlite3 database.
 func RunScript(path, script, message string) error {
 	cmd := exec.Command("sqlite3", path)
 	cmd.Stdin = strings.NewReader(script)
@@ -22,7 +23,10 @@ func RunScript(path, script, message string) error {
 	return err
 }
 
+// RunImport reads data to be imported (e.g. two column TSV) from reader into a
+// given database. Before importing, read commands from a given init file.
 func RunImport(r io.Reader, initFile, outputFile string) (int64, error) {
+	// TODO: Unify parameter order, e.g. put outputFile first.
 	cmd := exec.Command("sqlite3", "--init", initFile, outputFile)
 	cmdStdin, err := cmd.StdinPipe()
 	if err != nil {
@@ -67,15 +71,13 @@ func TempFileReader(r io.Reader) (string, error) {
 
 // Flushf for messages that should stay on a single line.
 func Flushf(s string, vs ...interface{}) {
-	// 2021/09/29 15:38:05
 	t := time.Now().Format("2006/01/02 15:04:05")
 	msg := fmt.Sprintf("\r"+t+" [io] "+s, vs...)
 	fmt.Printf("\r" + strings.Repeat(" ", len(msg)+1))
 	fmt.Println(msg)
 }
 
-// HumanSpeed returns a human readable throughput number, e.g. 10MB/s,
-// 12.3kB/s, etc.
+// HumanSpeed returns a human readable throughput number, e.g. 10MB/s.
 func HumanSpeed(bytesWritten int64, elapsedSeconds float64) string {
 	speed := float64(bytesWritten) / elapsedSeconds
 	return fmt.Sprintf("%s/s", ByteSize(int(speed)))
