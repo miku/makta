@@ -89,6 +89,7 @@ PRAGMA temp_store = MEMORY;
 				slikv.HumanSpeed(written, elapsed))
 			return nil
 		}
+		indexScripts []string
 	)
 	for {
 		b, err := br.ReadBytes('\n')
@@ -111,15 +112,13 @@ PRAGMA temp_store = MEMORY;
 		log.Fatal(err)
 	}
 	fmt.Println()
-	var indexScripts []string
 	switch *indexMode {
 	case 1:
-		indexScripts = append(indexScripts, keyIndexSQL)
+		indexScripts = []string{keyIndexSQL}
 	case 2:
-		indexScripts = append(indexScripts, valueIndexSQL)
+		indexScripts = []string{valueIndexSQL}
 	case 3:
-		indexScripts = append(indexScripts, keyIndexSQL)
-		indexScripts = append(indexScripts, valueIndexSQL)
+		indexScripts = []string{keyIndexSQL, valueIndexSQL}
 	default:
 		log.Printf("no index requested")
 	}
