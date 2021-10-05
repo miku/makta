@@ -28,13 +28,11 @@ var (
 )
 
 func main() {
+	flag.Parse()
 	var (
 		err     error
 		runFile string
-	)
-	flag.Parse()
-	var (
-		pragma = fmt.Sprintf(`
+		pragma  = fmt.Sprintf(`
 PRAGMA journal_mode = OFF;
 PRAGMA synchronous = 0;
 PRAGMA cache_size = %d;
@@ -61,7 +59,7 @@ PRAGMA temp_store = MEMORY;
 	}
 	if termutil.Isatty(os.Stdin.Fd()) {
 		log.Println("stdin: no data")
-		os.Exit(0)
+		os.Exit(1)
 	}
 	if _, err := os.Stat(*outputFile); os.IsNotExist(err) {
 		if err := slikv.RunScript(*outputFile, initSQL, "initialized database"); err != nil {
