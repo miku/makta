@@ -114,3 +114,11 @@ sys     0m3.224s
 ```
 
 * 10M rows stored, with indexed keys and values in 27s, 370370 rows/s
+
+## TODO
+
+* [ ] allow tab-importing to be done programmatically, for any number of columns
+* [ ] a better name: mktabdb, mktabs, dbize
+* [ ] could write a tool for *burst* queries, e.g. split data into N shard,
+      create N databases and distribute queries across files - e.g. `dbize db.json`
+      with the same repl, etc. -- if we've seen 300K inserts per db, we may see 0.X x CPU x 300K, maybe millions/s.
