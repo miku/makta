@@ -16,7 +16,7 @@ CPU](https://ark.intel.com/content/www/us/en/ark/products/122589/intel-core-i7-8
 and an [nvme](https://en.wikipedia.org/wiki/NVM_Express) drive; database file
 size: 400G).
 
-![](static/439256.gif)
+![](static/443238.gif)
 
 ## How it works
 
