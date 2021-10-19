@@ -74,7 +74,7 @@ func Flushf(s string, vs ...interface{}) {
 	t := time.Now().Format("2006/01/02 15:04:05")
 	msg := fmt.Sprintf("\r"+t+" [io] "+s, vs...)
 	fmt.Printf("\r" + strings.Repeat(" ", len(msg)+1))
-	fmt.Println(msg)
+	fmt.Printf(msg)
 }
 
 // HumanSpeed returns a human readable throughput number, e.g. 10MB/s.
