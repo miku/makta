@@ -32,9 +32,7 @@ func main() {
 	var (
 		err      error
 		initFile string
-	)
-	var (
-		pragma = fmt.Sprintf(`
+		pragma   = fmt.Sprintf(`
 PRAGMA journal_mode = OFF;
 PRAGMA synchronous = 0;
 PRAGMA cache_size = %d;
@@ -54,7 +52,6 @@ PRAGMA temp_store = MEMORY;
 .mode tabs
 .import /dev/stdin map`, pragma)
 	)
-
 	if *showVersion {
 		fmt.Printf("makta %s %s\n", Version, Buildtime)
 		os.Exit(0)
@@ -114,11 +111,18 @@ PRAGMA temp_store = MEMORY;
 	fmt.Println()
 	switch *indexMode {
 	case 1:
-		indexScripts = []string{keyIndexSQL}
+		indexScripts = []string{
+			keyIndexSQL,
+		}
 	case 2:
-		indexScripts = []string{valueIndexSQL}
+		indexScripts = []string{
+			valueIndexSQL,
+		}
 	case 3:
-		indexScripts = []string{keyIndexSQL, valueIndexSQL}
+		indexScripts = []string{
+			keyIndexSQL,
+			valueIndexSQL,
+		}
 	default:
 		log.Printf("no index requested")
 	}
