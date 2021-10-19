@@ -1,4 +1,4 @@
-# makta
+# MAKTA
 
 > **mak**e a database from **ta**bular data
 
