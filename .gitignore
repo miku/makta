@@ -13,8 +13,8 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-/slikv
+/makta
 /fixtures
 /data.db
 *amd64.deb
-/packaging/deb/slikv/usr
+/packaging/deb/makta/usr

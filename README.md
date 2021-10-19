@@ -39,7 +39,7 @@ $ cat fixtures/sample-xs.tsv | column -t
 10.1001/amaguidesnewsletters.1997.mayjun01  10.1056/nejm199507133330207
 10.1001/amaguidesnewsletters.1997.mayjun01  10.1378/chest.88.3.376
 
-$ slikv -o xs.db < fixtures/sample-xs.tsv
+$ makta -o xs.db < fixtures/sample-xs.tsv
 2021/10/04 16:13:06 [ok] initialized database · xs.db
 2021/10/04 16:13:06 [io] written 679B · 361.3K/s
 2021/10/04 16:13:06 [ok] 1/2 created index · xs.db
@@ -72,17 +72,21 @@ $ sqlite3 xs.db 'select * from map where k = "10.1001/amaguidesnewsletters.1997.
 Sometimes, programs need lookup tables to map values between two domains. A
 [dictionary](https://xlinux.nist.gov/dads/HTML/dictionary.html) is a perfect
 data structure as long as the data fits in memory. For larger sets (hundreds of
-millions of entries), a dictionary will not work.
+millions of entries), a dictionary may not work.
 
-The *slikv* tool takes a two-column tabular file and turns it into an sqlite3
-database, which you can query in your program. Depending on the size of the
-data, you can expect 1K-50K queries per second.
+The *makta* tool currently takes a two-column TSV and turns it into an sqlite3
+database, which you can query in your program. Depending on a couple of
+factors, you maybe be able to query the lookup database with about 1-50K
+queries per second.
+
+Finally, sqlite3 is just an awesome database and [recommeded storage
+format](https://www.sqlite.org/locrsf.html).
 
 ## Usage
 
-```shsh
-$ slikv -h
-Usage of slikv:
+```sh
+$ makta -h
+Usage of makta:
   -B int
         buffer size (default 67108864)
   -C int
@@ -104,7 +108,7 @@ $ wc -l fixtures/sample-10m.tsv
 $ stat --format "%s" fixtures/sample-10m.tsv
 548384897
 
-$ time slikv < fixtures/sample-10m.tsv
+$ time makta < fixtures/sample-10m.tsv
 2021/09/30 16:58:07 [ok] initialized database -- data.db
 2021/09/30 16:58:17 [io] written 523M · 56.6M/s
 2021/09/30 16:58:21 [ok] 1/2 created index -- data.db

@@ -1,6 +1,6 @@
 SHELL := /bin/bash
-TARGETS := slikv
-PKGNAME := slikv
+TARGETS := makta
+PKGNAME := makta
 VERSION := $(shell git rev-parse --short HEAD)
 BUILDTIME := $(shell date -u '+%Y-%m-%dT%H:%M:%SZ')
 

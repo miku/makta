@@ -1,4 +1,4 @@
-module github.com/miku/slikv
+module github.com/miku/makta
 
 go 1.17
 

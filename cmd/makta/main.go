@@ -1,4 +1,4 @@
-// slikv takes two columns and turns it into an indexed sqlite3 database.
+// makta takes two columns and turns it into an indexed sqlite3 database.
 package main
 
 import (
@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/andrew-d/go-termutil"
-	slikv "github.com/miku/slikv"
+	"github.com/miku/makta"
 )
 
 var (
@@ -56,7 +56,7 @@ PRAGMA temp_store = MEMORY;
 	)
 
 	if *showVersion {
-		fmt.Printf("slikv %s %s\n", Version, Buildtime)
+		fmt.Printf("makta %s %s\n", Version, Buildtime)
 		os.Exit(0)
 	}
 	if termutil.Isatty(os.Stdin.Fd()) {
@@ -64,11 +64,11 @@ PRAGMA temp_store = MEMORY;
 		os.Exit(1)
 	}
 	if _, err := os.Stat(*outputFile); os.IsNotExist(err) {
-		if err := slikv.RunScript(*outputFile, initSQL, "initialized database"); err != nil {
+		if err := makta.RunScript(*outputFile, initSQL, "initialized database"); err != nil {
 			log.Fatal(err)
 		}
 	}
-	if initFile, err = slikv.TempFileReader(strings.NewReader(importSQL)); err != nil {
+	if initFile, err = makta.TempFileReader(strings.NewReader(importSQL)); err != nil {
 		log.Fatal(err)
 	}
 	var (
@@ -78,15 +78,15 @@ PRAGMA temp_store = MEMORY;
 		started     = time.Now()
 		elapsed     float64
 		importBatch = func() error {
-			n, err := slikv.RunImport(&buf, initFile, *outputFile)
+			n, err := makta.RunImport(&buf, initFile, *outputFile)
 			if err != nil {
 				return err
 			}
 			written += n
 			elapsed = time.Since(started).Seconds()
-			slikv.Flushf("written %s · %s",
-				slikv.ByteSize(int(written)),
-				slikv.HumanSpeed(written, elapsed))
+			makta.Flushf("written %s · %s",
+				makta.ByteSize(int(written)),
+				makta.HumanSpeed(written, elapsed))
 			return nil
 		}
 		indexScripts []string
@@ -124,7 +124,7 @@ PRAGMA temp_store = MEMORY;
 	}
 	for i, script := range indexScripts {
 		msg := fmt.Sprintf("%d/%d created index", i+1, len(indexScripts))
-		if err := slikv.RunScript(*outputFile, script, msg); err != nil {
+		if err := makta.RunScript(*outputFile, script, msg); err != nil {
 			log.Fatal(err)
 		}
 	}

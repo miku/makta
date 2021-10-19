@@ -1,4 +1,4 @@
-package slikv
+package makta
 
 import (
 	"fmt"
