@@ -20,7 +20,7 @@ size: 400G).
 
 ## Installation
 
-* [https://github.com/miku/makta/releases](https://github.com/miku/makta/releases)
+> [https://github.com/miku/makta/releases](https://github.com/miku/makta/releases)
 
 ```sh
 $ go install github.com/miku/makta/cmd/makta@latest
