@@ -124,7 +124,14 @@ sys     0m3.224s
 ## TODO
 
 * [ ] allow tab-importing to be done programmatically, for any number of columns
-* [ ] a better name: mktabdb, mktabs, dbize
+* [x] a better name: mktabdb, mktabs, dbize - go with makta for now
 * [ ] could write a tool for *burst* queries, e.g. split data into N shard,
       create N databases and distribute queries across files - e.g. `dbize db.json`
       with the same repl, etc. -- if we've seen 300K inserts per db, we may see 0.X x CPU x 300K, maybe millions/s.
+
+## Design ideas
+
+A design that works with 50M rows per database, e.g. 20 files for 1B rows;
+grouped under a single directory. Every interaction only involves the
+directory, not the individual files.
+
