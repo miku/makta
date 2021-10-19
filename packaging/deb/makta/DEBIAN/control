@@ -1,4 +1,4 @@
-Package: slikv
+Package: makta
 Version: 0.1.0
 Section: utils
 Priority: optional
@@ -6,4 +6,4 @@ Architecture: amd64
 Essential: no
 Depends: libc6 (>= 2.12)
 Maintainer: Martin Czygan <martin.czygan@gmail.com>
-Description: Turn sqlite3 into a key value store, fast - for tabular input.
+Description: Turn a TSV file into a sqlite3 database.
