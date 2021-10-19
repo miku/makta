@@ -18,6 +18,14 @@ size: 400G).
 
 ![](static/443238.gif)
 
+## Installation
+
+* [https://github.com/miku/makta/releases](https://github.com/miku/makta/releases)
+
+```sh
+$ go install github.com/miku/makta/cmd/makta@latest
+```
+
 ## How it works
 
 Data is chopped up into smaller chunks (defaults to about 64MB) and imported with
