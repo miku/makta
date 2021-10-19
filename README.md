@@ -1,4 +1,6 @@
-# SLIKV
+# makta
+
+> **mak**e a database from **ta**bular data
 
 ![](static/table.jpg)
 
