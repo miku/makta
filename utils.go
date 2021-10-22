@@ -44,6 +44,7 @@ func RunImport(r io.Reader, initFile, outputFile string) (int64, error) {
 		n, err := io.Copy(cmdStdin, r)
 		if err != nil {
 			copyErr = fmt.Errorf("copy failed: %w", err)
+			return
 		}
 		written += n
 	}()
