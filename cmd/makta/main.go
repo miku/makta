@@ -1,4 +1,4 @@
-// makta takes two columns and turns it into an indexed sqlite3 database.
+// makta takes a two column TSV file and turns it into an indexed sqlite3 database.
 package main
 
 import (
@@ -13,18 +13,20 @@ import (
 	"time"
 
 	"github.com/andrew-d/go-termutil"
-	"github.com/miku/makta"
+	"github.com/miku/makta/tabutils"
 )
 
 var (
 	Version   string
 	Buildtime string
 
-	showVersion = flag.Bool("version", false, "show version and exit")
-	outputFile  = flag.String("o", "data.db", "output filename")
-	bufferSize  = flag.Int("B", 64*1<<20, "buffer size")
-	indexMode   = flag.Int("I", 3, "index mode: 0=none, 1=k, 2=v, 3=kv")
-	cacheSize   = flag.Int("C", 1000000, "sqlite3 cache size, needs memory = C x page size")
+	showVersion  = flag.Bool("version", false, "show version and exit")
+	outputFile   = flag.String("o", "data.db", "output filename")
+	bufferSize   = flag.Int("B", 64*1<<20, "buffer size")
+	indexMode    = flag.Int("I", 3, "index mode: 0=none, 1=k, 2=v, 3=kv")
+	cacheSize    = flag.Int("C", 1000000, "sqlite3 cache size, needs memory = C x page size")
+	initDatabase = flag.Bool("init", false, "on start, initialize database, even when the file already exists")
+	verbose      = flag.Bool("verbose", false, "be verbose")
 )
 
 func main() {
@@ -60,12 +62,17 @@ PRAGMA temp_store = MEMORY;
 		log.Println("stdin: no data")
 		os.Exit(1)
 	}
-	if _, err := os.Stat(*outputFile); os.IsNotExist(err) {
-		if err := makta.RunScript(*outputFile, initSQL, "initialized database"); err != nil {
+	_, err = os.Stat(*outputFile)
+	if err != nil || *initDatabase {
+		if os.IsNotExist(err) || *initDatabase {
+			if err := tabutils.RunScript(*outputFile, initSQL, "initialized database"); err != nil {
+				log.Fatal(err)
+			}
+		} else {
 			log.Fatal(err)
 		}
 	}
-	if initFile, err = makta.TempFileReader(strings.NewReader(importSQL)); err != nil {
+	if initFile, err = tabutils.TempFileReader(strings.NewReader(importSQL)); err != nil {
 		log.Fatal(err)
 	}
 	var (
@@ -74,16 +81,25 @@ PRAGMA temp_store = MEMORY;
 		written     int64
 		started     = time.Now()
 		elapsed     float64
+		numBatches  int
 		importBatch = func() error {
-			n, err := makta.RunImport(&buf, initFile, *outputFile)
+			n, err := tabutils.RunImport(&buf, initFile, *outputFile)
 			if err != nil {
-				return err
+				return fmt.Errorf("import: %w", err)
 			}
 			written += n
+			numBatches++
 			elapsed = time.Since(started).Seconds()
-			makta.Flushf("written %s · %s",
-				makta.ByteSize(int(written)),
-				makta.HumanSpeed(written, elapsed))
+			if *verbose {
+				log.Printf("imported batch #%d, %s at %s",
+					numBatches,
+					tabutils.ByteSize(int(written)),
+					tabutils.HumanSpeed(written, elapsed))
+			} else {
+				tabutils.Flushf("written %s · %s",
+					tabutils.ByteSize(int(written)),
+					tabutils.HumanSpeed(written, elapsed))
+			}
 			return nil
 		}
 		indexScripts []string
@@ -94,19 +110,19 @@ PRAGMA temp_store = MEMORY;
 			break
 		}
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalf("read: %v", err)
 		}
 		if _, err := buf.Write(b); err != nil {
-			log.Fatal(err)
+			log.Fatalf("write: %v", err)
 		}
 		if buf.Len() >= *bufferSize {
 			if err := importBatch(); err != nil {
-				log.Fatal(err)
+				log.Fatalf("batch: %v", err)
 			}
 		}
 	}
 	if err := importBatch(); err != nil {
-		log.Fatal(err)
+		log.Fatalf("batch: %v", err)
 	}
 	fmt.Println()
 	switch *indexMode {
@@ -126,10 +142,11 @@ PRAGMA temp_store = MEMORY;
 	default:
 		log.Printf("no index requested")
 	}
+	log.Printf("[io] building %d indices ...", len(indexScripts))
 	for i, script := range indexScripts {
 		msg := fmt.Sprintf("%d/%d created index", i+1, len(indexScripts))
-		if err := makta.RunScript(*outputFile, script, msg); err != nil {
-			log.Fatal(err)
+		if err := tabutils.RunScript(*outputFile, script, msg); err != nil {
+			log.Fatalf("run script: %v", err)
 		}
 	}
 }
