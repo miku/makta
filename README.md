@@ -2,6 +2,8 @@
 
 > **mak**e a database from **ta**bular data
 
+[![DOI](https://zenodo.org/badge/412089136.svg)](https://zenodo.org/badge/latestdoi/412089136)
+
 ![](static/table.jpg)
 
 Turn [tabular data](https://en.wikipedia.org/wiki/Tab-separated_values) into a
